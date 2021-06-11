@@ -7,61 +7,77 @@ const client = new Discord.Client();
 client.login(process.env.BOT_TOKEN)
 const commandPrefixRegex = new RegExp('^\\?');
 
+const help = new Discord.MessageEmbed()
+.setTitle(`Commands`)
+.setDescription(`
+ - ?           Home
+ - ?xxx        Page xxx
+ - ?xxx-x      Page xxx, subpage x
+ - ?help       This help
+`)
+.setFooter('@Oliwerix')
+
+
+
 client.on('message', (msg)=>{
     if (commandPrefixRegex.test(msg.content)){
         let str = msg.content.substring(1);
-        
-        let subpage;
-        let page = '100';
 
-        if(str.length == 3)
-            page = str;
-        if(str.includes('-')){
-            page = str.split('-')[0]
-            subpage = str.split('-')[1]
-        }
-        if(subpage === undefined) {
-            subpage = '1'
-        }
+        if(str=='help' || str=='commands' ||)
+            msg.reply(help)
+        else {
+            let subpage;
+            let page = '100';
 
-        url = `https://teletext.rtvslo.si/ttxdata/${page}_${subpage.padStart(4,'0')}.png`
-        fetch(url , {method: 'HEAD'}).then((response)=>{
-            if(response.status != 200) {
-                try {
-                    msg.reply(`Kera budala lmao, stran ${page} ne obstaja!`);
-                } catch (error) {
-                    console.log(error);
-                }
-            } else {
-                let links;
-                fetch(`https://teletext.rtvslo.si/${page}/${subpage}`)
-                    .then(res => res.text().then(body=>{
-                        links = extractPageNumbers(body);
-                        subpages = countSubpages(body);
-                        if(subpages > 1) {
-                            subpages = `Podstrani: ${countSubpages(body)}`
-                        } else {
-                            subpages = ""
-                        }
-                        console.log(links)
-                        const ttx = new Discord.MessageEmbed()
-                            .setTitle(`Z veseljem podajam stran ${page}-${subpage} SLO1 teletexta!`)
-                            .setDescription(subpages)
-                            .setImage(url)
-                            .setFooter(links)
-                        msg.delete()
-                        msg.reply(ttx).then(msg => {
-                            setTimeout(()=>{
-                                    try {msg.delete()}
-                                    catch(error) { console.log(error)}
-                                }
-                                ,20000)
-                                
-                        })
-                    }))
+            if(str.length == 3)
+                page = str;
+            if(str.includes('-')){
+                page = str.split('-')[0]
+                subpage = str.split('-')[1]
             }
-        })
+            if(subpage === undefined) {
+                subpage = '1'
+            }
 
+            url = `https://teletext.rtvslo.si/ttxdata/${page}_${subpage.padStart(4,'0')}.png`
+            fetch(url , {method: 'HEAD'}).then((response)=>{
+                if(response.status != 200) {
+                    try {
+                        msg.reply(`Kera budala lmao, stran ${page} ne obstaja!`);
+                    } catch (error) {
+                        console.log(error);
+                    }
+                } else {
+                    let links;
+                    fetch(`https://teletext.rtvslo.si/${page}/${subpage}`)
+                        .then(res => res.text().then(body=>{
+                            links = extractPageNumbers(body);
+                            subpages = countSubpages(body);
+                            if(subpages > 1) {
+                                subpages = `Podstrani: ${countSubpages(body)}`
+                            } else {
+                                subpages = ""
+                            }
+                            console.log(links)
+                            const ttx = new Discord.MessageEmbed()
+                                .setTitle(`Z veseljem podajam stran ${page}-${subpage} SLO1 teletexta!`)
+                                .setDescription(subpages)
+                                .setImage(url)
+                                .setFooter(links)
+                            msg.delete()
+                            msg.reply(ttx).then(msg => {
+                                setTimeout(()=>{
+                                        try {msg.delete()}
+                                        catch(error) { console.log(error)}
+                                    }
+                                    ,20000)
+                                    
+                            })
+                        }))
+                }
+            })
+
+        }
     }
 })
 
