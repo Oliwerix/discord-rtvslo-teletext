@@ -4,16 +4,23 @@ const fetch = require('node-fetch');
 const HTMLParser = require('node-html-parser');
 
 const client = new Discord.Client();
-client.login(process.env.BOT_TOKEN)
-const commandPrefixRegex = new RegExp('^\\?');
+client.login(process.env.BOT_TOKEN).then((token) => {
+    client.user.setPresence({
+     game: { name: '?help' },
+     status: 'online',
+    });
+   });
+const commandPrefixRegex = new RegExp('^\\%');
+
+
 
 const help = new Discord.MessageEmbed()
 .setTitle(`Commands`)
 .setDescription(`
- - ?           Home
- - ?xxx        Page xxx
- - ?xxx-x      Page xxx, subpage x
- - ?help       This help
+ - %           Home
+ - %xxx        Page xxx
+ - %xxx-x      Page xxx, subpage x
+ - %help       This help
 `)
 .setFooter('@Oliwerix')
 
@@ -58,7 +65,6 @@ client.on('message', (msg)=>{
                             } else {
                                 subpages = ""
                             }
-                            console.log(links)
                             const ttx = new Discord.MessageEmbed()
                                 .setTitle(`Z veseljem podajam stran ${page}-${subpage} SLO1 teletexta!`)
                                 .setDescription(subpages)
@@ -100,14 +106,12 @@ function extractPageNumbers(page) {
         style: false,
     }});
     root = root.querySelectorAll('area');
-    let regex = /\d+,322,/g
     let links = [];
     root.forEach(e=> {
         href = e.attributes.href.split('/')[0];
         let c = e.attributes.coords.split(',')
         let x = (parseInt(c[0])+parseInt(c[2]))/2
         if (c[1] == 322){
-            console.log(x)
             links.push([href])
         }
     })
