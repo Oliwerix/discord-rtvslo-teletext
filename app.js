@@ -23,7 +23,7 @@ client.on('message', (msg)=>{
     if (commandPrefixRegex.test(msg.content)){
         let str = msg.content.substring(1);
 
-        if(str=='help' || str=='commands' ||)
+        if(str=='help' || str=='commands')
             msg.reply(help)
         else {
             let subpage;
