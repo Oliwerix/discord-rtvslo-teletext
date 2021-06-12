@@ -85,7 +85,8 @@ client.on('message', (msg)=>{
                                 .setImage(url)
                                 .setFooter(links)
                             try {
-                                msg.delete();
+                                if(!(msg.channel instanceof Discord.DMChannel))
+                                    msg.delete();
                                 msg.reply(ttx).then(msg => {
                                     messageClean(msg)    
                                 })
@@ -101,9 +102,9 @@ client.on('message', (msg)=>{
     }
 })
 
-client.on('ready', ()=>{
+client.on('ready', async ()=> {
+    await Channels.sync();
     console.log('Bot is ready!');
-    Channels.sync();
 })
 function countSubpages(page) {
     var root = HTMLParser.parse(page, {blockTextElements: {
@@ -150,12 +151,11 @@ async function messageClean(msg) {
     if (channel){
         await Channels.update({message_id: msg.id}, { where: { channel_id: channel.channel_id}})
         msg.channel.messages.fetch(channel.message_id).then( message => {
-            try{message.delete()} catch (e){}
+            message.delete().catch(error=>console.error('There may be permission issues!'))
         }
-        ).catch(console.error)
+        ).catch(e=>{})
 
     } else {
-        console.log('creating')
         await Channels.create({
             channel_id: msg.channel.id,
             message_id: msg.id,
