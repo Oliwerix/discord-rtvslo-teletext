@@ -1,4 +1,5 @@
 # discord-rtvslo-teletext
+[![Node.js Package](https://github.com/Oliwerix/discord-rtvslo-teletext/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/Oliwerix/discord-rtvslo-teletext/actions/workflows/npm-publish.yml)
 A discord bot to add the RTVSLO teletext to your discord server. The bot uses the web teletex app on [teletext.rtvslo.si](https://teletext.rtvslo.si) to load images, special button information and subpage information. 
 
 
