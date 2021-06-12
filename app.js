@@ -150,7 +150,7 @@ async function messageClean(msg) {
     if (channel){
         await Channels.update({message_id: msg.id}, { where: { channel_id: channel.channel_id}})
         msg.channel.messages.fetch(channel.message_id).then( message => {
-            try{message.delete()} catch {}
+            try{message.delete()} catch (e){}
         }
         ).catch(console.error)
 
