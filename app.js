@@ -1,5 +1,7 @@
 const Discord = require('discord.js');
 require('dotenv').config();
+const help = require('./help').help;
+
 const fetch = require('node-fetch');
 const HTMLParser = require('node-html-parser');
 
@@ -25,25 +27,16 @@ const PREFIX = '%';
 
 
 
-const help = new Discord.MessageEmbed()
-.setTitle(`Commands`)
-.setDescription(`
- - %           Home
- - %xxx        Page xxx
- - %xxx-x      Page xxx, subpage x
- - %help       This help
-`)
-.setFooter('@Oliwerix')
 
 
 
 client.on('message', (msg)=>{
     if (msg.content.startsWith(PREFIX)){
         let str = msg.content.substring(1);
-        
-
         if(str=='help' || str=='commands')
             msg.reply(help)
+
+        
         else {
             let subpage;
             let page = '100';
@@ -68,7 +61,14 @@ client.on('message', (msg)=>{
             fetch(url , {method: 'HEAD'}).then((response)=>{
                 if(response.status != 200) {
                     try {
-                        msg.reply(`Kera budala lmao, stran ${page}.${subpage} ne obstaja!`);
+                        // msg.reply(`Kera budala lmao, stran ${page}.${subpage} ne obstaja!`);
+                        const ttx = new Discord.MessageEmbed()
+                            .setTitle(`Stran ne obstaja!`)
+                            .setImage(`https://api.oliwerix.com/900_0404.gif`)
+                        msg.reply('Stran ne obstaja!')
+                        msg.reply(ttx).then(msg =>{
+                            setTimeout(()=>msg.delete().catch(()=>{}),10000)
+                        })
                     } catch (error) {
                         console.log(error);
                     }
@@ -139,7 +139,7 @@ function extractPageNumbers(page) {
         let out = ""
         links.forEach(l=>out+=l+"                             ")
         out = out.trim()
-        out = "|               "+out+"               |"
+        out = "|               "+out+""
         return out
     } 
     else
