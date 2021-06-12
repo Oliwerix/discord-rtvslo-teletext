@@ -1,5 +1,5 @@
 # discord-rtvslo-teletext
-A discord bot to add the RTVSLO teletext to your discord server. The bot uses the web teletex app on (teletext.rtvslo.si)[https://teletext.rtvslo.si] to load images, special button information and subpage information. 
+A discord bot to add the RTVSLO teletext to your discord server. The bot uses the web teletex app on [teletext.rtvslo.si](https://teletext.rtvslo.si) to load images, special button information and subpage information. 
 
 
 ## Commands:
