@@ -1,13 +1,14 @@
 {
   "name": "rtvslo-teletext",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A discord bot to add the RTVSLO teletext to your discord server.",
+  "main": "app.js",
+  "homepage": "https://github.com/Oliwerix/discord-rtvslo-teletext",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["discod-bot","teletext","rtvslo","SLO1"],
+  "author": "Oliver Wagber <oliwerix@gmail.com> (https://oliwerix.com)",
   "license": "ISC",
   "dependencies": {
     "discord.js": "^12.5.3",

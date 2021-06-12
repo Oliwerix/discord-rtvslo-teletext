@@ -43,6 +43,7 @@ client.on('message', (msg)=>{
                         const ttx = new Discord.MessageEmbed()
                             .setTitle(`Stran ne obstaja!`)
                             .setImage(`https://api.oliwerix.com/900_0404.gif`)
+                            
                         msg.reply('Stran ne obstaja!')
                         msg.reply(ttx).then(msg =>{
                             setTimeout(()=>msg.delete().catch(()=>{}),10000)
@@ -91,6 +92,7 @@ client.on('ready', async ()=> {
  * @returns {String, String} The page and subpage number
  */
 function getPageNumber(str) {
+    //TODO make this elegant
     let subpage;
     let page = '100';
 
@@ -190,7 +192,7 @@ async function messageClean(msg) {
 
 
 /**
- * Database for storing the prevoius messages, used for deletion of old messages once new have been requested
+ * Table for storing the prevoius messages, used for deletion of old messages once new have been requested
  */
 let Channels = sequelize.define('channels', {
     channel_id: { 
