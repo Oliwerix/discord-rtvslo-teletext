@@ -3,14 +3,25 @@ require('dotenv').config();
 const fetch = require('node-fetch');
 const HTMLParser = require('node-html-parser');
 
+const Sequelize = require('sequelize');
+const sequelize = new Sequelize('database','user','hackmebaby',{
+    host: 'localhost',
+    dialect: 'sqlite',
+    storage: './database.sqlite',
+    logging: false
+});
+
+
+
+
 const client = new Discord.Client();
 client.login(process.env.BOT_TOKEN).then((token) => {
     client.user.setPresence({
-     game: { name: '?help' },
+     activity: { name: '%help' },
      status: 'online',
     });
    });
-const commandPrefixRegex = new RegExp('^\\%');
+const PREFIX = '%';
 
 
 
@@ -27,8 +38,9 @@ const help = new Discord.MessageEmbed()
 
 
 client.on('message', (msg)=>{
-    if (commandPrefixRegex.test(msg.content)){
+    if (msg.content.startsWith(PREFIX)){
         let str = msg.content.substring(1);
+        
 
         if(str=='help' || str=='commands')
             msg.reply(help)
@@ -41,7 +53,13 @@ client.on('message', (msg)=>{
             if(str.includes('-')){
                 page = str.split('-')[0]
                 subpage = str.split('-')[1]
+            } 
+            if (str.includes('.')){
+                page = str.split('.')[0]
+                subpage = str.split('.')[1]
+
             }
+
             if(subpage === undefined) {
                 subpage = '1'
             }
@@ -50,7 +68,7 @@ client.on('message', (msg)=>{
             fetch(url , {method: 'HEAD'}).then((response)=>{
                 if(response.status != 200) {
                     try {
-                        msg.reply(`Kera budala lmao, stran ${page} ne obstaja!`);
+                        msg.reply(`Kera budala lmao, stran ${page}.${subpage} ne obstaja!`);
                     } catch (error) {
                         console.log(error);
                     }
@@ -58,27 +76,23 @@ client.on('message', (msg)=>{
                     let links;
                     fetch(`https://teletext.rtvslo.si/${page}/${subpage}`)
                         .then(res => res.text().then(body=>{
+                            
                             links = extractPageNumbers(body);
                             subpages = countSubpages(body);
-                            if(subpages > 1) {
-                                subpages = `Podstrani: ${countSubpages(body)}`
-                            } else {
-                                subpages = ""
-                            }
                             const ttx = new Discord.MessageEmbed()
                                 .setTitle(`Z veseljem podajam stran ${page}-${subpage} SLO1 teletexta!`)
                                 .setDescription(subpages)
                                 .setImage(url)
                                 .setFooter(links)
-                            msg.delete()
-                            msg.reply(ttx).then(msg => {
-                                setTimeout(()=>{
-                                        try {msg.delete()}
-                                        catch(error) { console.log(error)}
-                                    }
-                                    ,20000)
-                                    
-                            })
+                            try {
+                                msg.delete();
+                                msg.reply(ttx).then(msg => {
+                                    messageClean(msg)    
+                                })
+                            }
+                            catch (error) {
+                                console.log(error);
+                            }
                         }))
                 }
             })
@@ -88,7 +102,8 @@ client.on('message', (msg)=>{
 })
 
 client.on('ready', ()=>{
-    console.log('Bot is ready!')
+    console.log('Bot is ready!');
+    Channels.sync();
 })
 function countSubpages(page) {
     var root = HTMLParser.parse(page, {blockTextElements: {
@@ -96,7 +111,11 @@ function countSubpages(page) {
         style: false,
     }});
     items = root.querySelectorAll('.podstranLink')
-    return items.length
+    if(items.length > 1) {
+        return `Podstrani: ${items.length}`
+    } else {
+        return ""
+    }
 }
 
 
@@ -126,3 +145,34 @@ function extractPageNumbers(page) {
     return ""
     
 }
+async function messageClean(msg) {
+    let channel = await Channels.findOne({where: {channel_id: msg.channel.id,},});
+    if (channel){
+        await Channels.update({message_id: msg.id}, { where: { channel_id: channel.channel_id}})
+        msg.channel.messages.fetch(channel.message_id).then( message => {
+            message.delete()
+        }
+        ).catch(console.error)
+
+    } else {
+        console.log('creating')
+        await Channels.create({
+            channel_id: msg.channel.id,
+            message_id: msg.id,
+        });
+    }
+}
+
+
+
+let Channels = sequelize.define('channels', {
+    channel_id: { 
+        type: Sequelize.STRING,
+        unique: true,
+    },
+    message_id: {
+        type: Sequelize.STRING,
+        unique: true,
+    }
+})
+
