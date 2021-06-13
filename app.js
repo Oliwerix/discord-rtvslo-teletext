@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const dateFormat = require('dateformat');
 require('dotenv').config();
 const fetch = require('node-fetch');
 const HTMLParser = require('node-html-parser');
@@ -30,13 +31,13 @@ const PREFIX = '%';
 client.on('message', (msg)=>{
     if (msg.content.startsWith(PREFIX)){  //check prefix
         let str = msg.content.substring(1); // remove prefix
-        
         let {page, subpage} = getPageNumber(str); //get ttx page and subpage numbers
 
         if(str=='help' || str=='commands')
             msg.reply(help) // send help page
         else {
-            imageUrl = `https://teletext.rtvslo.si/ttxdata/${page}_${subpage.padStart(4,'0')}.png` 
+            imageUrl = `https://teletext.rtvslo.si/ttxdata/${page}_${subpage.padStart(4,'0')}.png?${dateFormat(new Date(), "dd.mm.yyyy%20HH:mm:00")}` 
+            console.log(imageUrl)
             fetch(imageUrl , {method: 'HEAD'}).then((response)=>{  //check if page exists
                 if(response.status != 200) {  // if NOT
                     try {

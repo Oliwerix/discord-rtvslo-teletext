@@ -7,10 +7,16 @@
   "scripts": {
     "test": "node app.js"
   },
-  "keywords": ["discod-bot","teletext","rtvslo","SLO1"],
+  "keywords": [
+    "discod-bot",
+    "teletext",
+    "rtvslo",
+    "SLO1"
+  ],
   "author": "Oliver Wagber <oliwerix@gmail.com> (https://oliwerix.com)",
   "license": "ISC",
   "dependencies": {
+    "dateformat": "^4.5.1",
     "discord.js": "^12.5.3",
     "dotenv": "^10.0.0",
     "node-fetch": "^2.6.1",
